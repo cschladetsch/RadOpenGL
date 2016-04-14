@@ -1,19 +1,27 @@
-# -Aa is HPUX's way of invoking ANSI C
-CFLAGS = -g 
+PROJ = rad
 
-all:	draw.o rad.o room.o
+CC = cc
+CFLAGS = -g -I. -I/usr/include/
+CPPFLAGS = -std=c++11 $(CFLAGS)
 
-draw.o:	draw.o rad.h
-	cc $(CFLAGS) -c draw.c -o draw.o
+BASIC_LNFLAGS = -lm 
+GL_LNFLAGS =  -lglut -lGL 
+LNFLAGS = $(GL_LNFLAGS) $(BASIC_LNFLAGS) 
 
-rad.o:	rad.o rad.h
-	cc $(CFLAGS) -c rad.c -o rad.o
+OBJS = room.o draw.o rad.o
 
-room.o:	room.o rad.h
-	cc $(CFLAGS) -c room.c -o room.o
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ -c $< 
 
-app:
-	cc room.o rad.o draw.o
+%.o: %.c++ $(DEPS)
+	$(CC) $(CPPFLAGS) -o $@ -c $< 
+
+%.o: %.cpp $(DEPS)
+	$(CC) $(CPPFLAGS) -o $@ -c $< 
+
+$(PROJ) : $(OBJS)
+	$(CC) $(OBJS) $(LNFLAGS) -o $(PROJ)
 
 clean:
-	/bin/rm -f draw.o rad.o room.o
+	rm $(OBJS)
+
