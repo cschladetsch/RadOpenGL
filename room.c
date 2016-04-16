@@ -15,7 +15,9 @@
 ******************************************************************************/
 
 #include <stdlib.h>
+
 #include "rad.h"
+#include "GL/freeglut.h"
 
 /* a quadrilateral */
 typedef struct {
@@ -222,12 +224,23 @@ void InitParams()
 	params.displayView.wid=0;
 }
 
-void main()
+void InitGraphics()
 {
-	InitParams();
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowSize(800, 800);
+	glutCreateWindow("Rad Test");
+}
+
+int main(int argc, char **argv)
+{
+	glutInit(&argc, argv);
+	InitGraphics();
+
 	InitRad(&params);
 	DoRad();
 	CleanUpRad();
+
+	return 0;
 }
 
 

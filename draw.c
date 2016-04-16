@@ -8,6 +8,7 @@
 *
 *	8/27/1991 S. Eric Chen	
 ******************************************************************************/
+#include "GL/freeglut.h"
 #include "rad.h"
 
 void BeginDraw(TView *view, unsigned long color)
