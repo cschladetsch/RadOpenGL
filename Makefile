@@ -5,7 +5,7 @@ CFLAGS = -g -I. -I/usr/include/
 CPPFLAGS = -std=c++11 $(CFLAGS)
 
 BASIC_LNFLAGS = -lm 
-GL_LNFLAGS =  -lglut -lGL 
+GL_LNFLAGS =  -lGL 
 LNFLAGS = $(GL_LNFLAGS) $(BASIC_LNFLAGS) 
 
 OBJS = room.o draw.o rad.o

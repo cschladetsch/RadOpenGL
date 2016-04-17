@@ -467,7 +467,7 @@ static void
 DisplayResults(TView* view)
 {
 	unsigned long i;
-	register TElement* ep;
+	TElement* ep;
 	TSpectra ambient;
 	GetAmbient(&ambient);
 	
@@ -492,11 +492,9 @@ DisplayResults(TView* view)
 	}
 			
 	EndDraw();
-
 }
 
-static void
-DrawElement(TElement* ep, unsigned long color)
+static void DrawElement(TElement* ep, unsigned long color)
 {
 	static TPoint3f pts[kMaxPolyPoints];
 	int nPts = ep->nVerts;
@@ -505,9 +503,5 @@ DrawElement(TElement* ep, unsigned long color)
 		pts[j] = params->points[ep->verts[j]];
 	
 	DrawPolygon(nPts, pts, &ep->normal, color);
-
 }
-
-
-
 

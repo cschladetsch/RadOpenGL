@@ -8,8 +8,10 @@
 *
 *	8/27/1991 S. Eric Chen	
 ******************************************************************************/
-#include "GL/freeglut.h"
 #include "rad.h"
+
+#include "GL/glew.h"
+#include "GL/wglew.h"
 
 void BeginDraw(TView *view, unsigned long color)
 {
@@ -47,7 +49,7 @@ void EndDraw()
 {
 	/* finish the drawing of all polygons */
 	/* display the contents of view->buffer to the current window if necessary */
-
+	glFlush();
 }
 
 

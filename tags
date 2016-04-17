@@ -1,0 +1,39 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AddVector	rad.c	28;"	d	file:
+CleanUpRad	rad.c	/^void CleanUpRad()$/;"	f
+ComputeFormfactors	rad.c	/^static void ComputeFormfactors(unsigned long shootPatch)$/;"	f	file:
+CrossVector	rad.c	30;"	d	file:
+DisplayResults	rad.c	/^DisplayResults(TView* view)$/;"	f	file:
+DistributeRad	rad.c	/^static void DistributeRad(unsigned long shootPatch)$/;"	f	file:
+DoRad	rad.c	/^void DoRad()$/;"	f
+DotVector	rad.c	33;"	d	file:
+DrawElement	rad.c	/^static void DrawElement(TElement* ep, unsigned long color)$/;"	f	file:
+FindShootPatch	rad.c	/^static int FindShootPatch(unsigned long *shootPatch)$/;"	f	file:
+GetAmbient	rad.c	/^GetAmbient(TSpectra* ambient)$/;"	f	file:
+Index	rad.c	170;"	d	file:
+InitRad	rad.c	/^void InitRad(TRadParams *p)$/;"	f
+MakeSideFactors	rad.c	/^static void MakeSideFactors($/;"	f	file:
+MakeTopFactors	rad.c	/^static void MakeTopFactors($/;"	f	file:
+NormalizeVector	rad.c	35;"	d	file:
+PI	rad.c	27;"	d	file:
+RandomFloat	rad.c	262;"	d	file:
+ScaleVector	rad.c	34;"	d	file:
+SpectraToRGB	rad.c	/^SpectraToRGB(TSpectra* spectra)$/;"	f	file:
+SubVector	rad.c	29;"	d	file:
+SumFactors	rad.c	/^static void SumFactors($/;"	f	file:
+THemicube	rad.c	/^} THemicube;$/;"	t	typeref:struct:__anon1	file:
+black	rad.c	/^static const TSpectra black = { 0, 0, 0 };	\/* for initialization *\/$/;"	v	file:
+formfactors	rad.c	/^static double *formfactors;	\/* a form-factor array which has the same length as the number of elements *\/$/;"	v	file:
+hemicube	rad.c	/^static THemicube hemicube;	\/* one hemi-cube *\/$/;"	v	file:
+kBackgroundItem	rad.c	173;"	d	file:
+kMaxPolyPoints	rad.c	26;"	d	file:
+params	rad.c	/^static TRadParams *params;	\/* input parameters *\/$/;"	v	file:
+sideFactors	rad.c	/^	double*	sideFactors; \/* delta form-factors of the side faces *\/$/;"	m	struct:__anon1	file:
+topFactors	rad.c	/^	double*	topFactors;	\/* delta form-factors(weight for each pixel) of the top face *\/$/;"	m	struct:__anon1	file:
+totalEnergy	rad.c	/^static double totalEnergy;	\/* total emitted energy; used for convergence checking *\/$/;"	v	file:
+view	rad.c	/^	TView	view;	\/* we only need to store one face of the hemi-cube *\/$/;"	m	struct:__anon1	file:
