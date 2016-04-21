@@ -25,7 +25,7 @@
 
 #include "rad.h"
 
-void DrawPolygon(int nPts, TPoint3f *pts, TVector3f* normals, unsigned int color);
+void DrawPolygon(int nPts, TPoint3f *pts, TVector3f* normals, unsigned long color);
 
 #define kMaxPolyPoints	255
 #define PI	3.1415926
@@ -53,14 +53,13 @@ static double totalEnergy;	/* total emitted energy; used for convergence checkin
 
 static const TSpectra black = { 0, 0, 0 };	/* for initialization */
 static int FindShootPatch(unsigned long *shootPatch);
-static void SumFactors(double* formfs, int xRes, int yRes,
-                       unsigned long* buf, double* deltaFactors);
+//static void SumFactors(double* formfs, int xRes, int yRes, long unsigned int * buf, double* deltaFactors);
 static void MakeTopFactors(int hres, double* deltaFactors);
 static void MakeSideFactors(int hres, double* deltaFactors);
 static void ComputeFormfactors(unsigned long shootPatch);
 static void DistributeRad(unsigned long shootPatch);
 static void DisplayResults(TView* view);
-static void DrawElement(TElement* ep, unsigned int color);
+static void DrawElement(TElement* ep, unsigned long color);
 static TColor32b SpectraToRGB(TSpectra* spectra);
 
 
@@ -83,7 +82,7 @@ void InitRad(TRadParams *p)
 	hRes = ((int)(params->hemicubeRes/2.0+0.5))*2;
 	hemicube.view.xRes = hemicube.view.yRes = hRes;
 	n = hRes*hRes;
-	hemicube.view.buffer = (unsigned  long int *)calloc(n, sizeof(unsigned long));
+	hemicube.view.buffer = (unsigned long int *)calloc(n, sizeof(unsigned long int));
 	hemicube.view.wid=0;
 	hemicube.view.near = params->worldSize*0.001f;
 	hemicube.view.far = params->worldSize;
@@ -130,16 +129,20 @@ void DoRad()
 {
 	unsigned long shootPatch;
 
+	printf("FindShootPatch 1\n");
 	while (FindShootPatch(&shootPatch))
 	{
-		printf("1\n");
+		printf("ComputeFormfactors 2\n");
 		ComputeFormfactors(shootPatch);
-		printf("2\n");
+
+		printf("DistributeRad 3\n");
 		DistributeRad(shootPatch);
-		printf("3\n");
+
+		printf("DisplayResults 3\n");
 		DisplayResults(&params->displayView);
 	}
 
+	printf("Done - not more patches\n");
 }
 
 /* Clean up */
@@ -156,17 +159,18 @@ void CleanUpRad()
 /* Return 0 if convergence is reached; otherwise, return 1 */
 static int FindShootPatch(unsigned long *shootPatch)
 {
+	printf("FindSHootPatch enter\n");
 	int i, j;
-	double energySum, error, maxEnergySum=0;
+	float energySum, error, maxEnergySum=0;
 	TPatch* ep;
 
 	ep = params->patches;
 
 	for (i=0; i< params->nPatches; i++, ep++)
 	{
-		energySum =0;
+		energySum = 0;
 
-		for (j=0; j<kNumberOfRadSamples; j++)
+		for (j = 0; j < kNumberOfRadSamples; j++)
 		{
 			energySum += ep->unshotRad.samples[j] * ep->area;
 		}
@@ -174,23 +178,25 @@ static int FindShootPatch(unsigned long *shootPatch)
 		if (energySum > maxEnergySum)
 		{
 			*shootPatch = i;
+			printf("Patch %ul has energy %f\n", i, energySum);
 			maxEnergySum = energySum;
 		}
+
 	}
+	printf("Most energetic patch: %lu %f (from %lu patches)\n", *shootPatch, maxEnergySum, params->nPatches);
 
 	error = maxEnergySum / totalEnergy;
 
 	/* check convergence */
 	if (error < params->threshold)
 	{
+		printf("Converged - finished!\n");
 		return (0);    /* converged */
 	}
 	else
 	{
 		return (1);
 	}
-
-
 }
 
 /* Find out the index to the delta form-factors array */
@@ -203,7 +209,7 @@ static int FindShootPatch(unsigned long *shootPatch)
 static void SumFactors(
     double* formfs, /* output */
     int xRes, int yRes, /* resolution of the hemi-cube face */
-    unsigned long* buf, /* we only need the storage of the top hemi-cube face */
+    long unsigned int* buf, /* we only need the storage of the top hemi-cube face */
     double* deltaFactors /* delta form-factors for each hemi-cube pixel */
 )
 {
@@ -249,11 +255,11 @@ static void MakeTopFactors(
 		for ( k=0 ; k<hres ; k++ )
 		{
 			dk = (double)k;
-			xSq = ( n - (dk + 0.5) ) / n;
+			xSq = ( n - (dk + 0.5f) ) / n;
 			xSq *= xSq;
-			xy1Sq =  xSq + ySq + 1.0 ;
+			xy1Sq =  xSq + ySq + 1.0f ;
 			xy1Sq *= xy1Sq;
-			*wp++ = 1.0 / (xy1Sq * PI * n * n);
+			*wp++ = 1.0f / (xy1Sq * PI * n * n);
 		}
 	}
 }
@@ -269,7 +275,7 @@ static void MakeSideFactors(
 	double x, xSq , y, ySq, xy1, xy1Sq;
 	double n= hres;
 	double* wp;
-	double dj, dk;
+	float dj, dk;
 
 	wp = deltaFactors;
 
@@ -297,13 +303,15 @@ static void MakeSideFactors(
 /* Compute form-factors from the shooting patch to every elements */
 static void ComputeFormfactors(unsigned long shootPatch)
 {
+	printf("ComputerFormFactors");
+
 	unsigned long i;
 	TVector3f	up[5];
 	TPoint3f	lookat[5];
 	TPoint3f	center;
 	TVector3f	normal, tangentU, tangentV, vec;
 	int face;
-	double		norm;
+	float		norm;
 	TPatch*		sp;
 	double*		fp;
 	TElement*	ep;
@@ -401,13 +409,15 @@ static void ComputeFormfactors(unsigned long shootPatch)
 /* Reset the shooter's unshot radiosity to 0 */
 static void DistributeRad(unsigned long shootPatch)
 {
+	printf("DistributedRad");
+
 	unsigned long i;
 	int j;
 	TPatch* sp;
 	TElement* ep;
 	double* fp;
 	TSpectra deltaRad;
-	double w;
+	float w;
 
 	sp = &(params->patches[shootPatch]);
 
@@ -446,7 +456,7 @@ SpectraToRGB(TSpectra* spectra)
 {
 	TColor32b	c;
 	TSpectra	r;
-	double 	max=1.0;
+	float 	max=1.0;
 	int k;
 
 	for (k=kNumberOfRadSamples; k--;)
@@ -492,7 +502,7 @@ GetAmbient(TSpectra* ambient)
 
 	if (first)
 	{
-		double areaSum;
+		float areaSum;
 		TSpectra rSum;
 		areaSum=0;
 		rSum=black;
@@ -533,12 +543,14 @@ GetAmbient(TSpectra* ambient)
 	{
 		ambient->samples[k] = uSum.samples[k] / baseSum.samples[k];
 	}
-
 }
+
+extern int _frame;
 
 static void
 DisplayResults(TView* view)
 {
+	printf("DisplayResults %d\n", _frame);
 	unsigned long i;
 	TElement* ep;
 	TSpectra ambient;
@@ -576,7 +588,7 @@ DisplayResults(TView* view)
 	EndDraw();
 }
 
-static void DrawElement(TElement* ep, unsigned int color)
+static void DrawElement(TElement* ep, unsigned long color)
 {
 	static TPoint3f pts[kMaxPolyPoints];
 	int nPts = ep->nVerts;

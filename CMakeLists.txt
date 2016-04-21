@@ -30,6 +30,6 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(gl DEFAULT_MSG gl_LIBRARY gl_INCLUDE_DIR)
 
 add_executable(RadOpenGL ${SOURCE_FILES})
 
-target_link_libraries(RadOpenGL GL)
 target_link_libraries(RadOpenGL glut)
+target_link_libraries(RadOpenGL GL)
 

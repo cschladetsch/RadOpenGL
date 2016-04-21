@@ -254,8 +254,7 @@ void InitParams()
 		MeshQuad(&roomPolys[i]);
 	}
 
-	params.displayView.buffer= (unsigned long*)calloc(
-	                               params.displayView.xRes*params.displayView.yRes, sizeof(unsigned long));
+	params.displayView.buffer= (unsigned long*)calloc(params.displayView.xRes*params.displayView.yRes, sizeof(unsigned long));
 	params.displayView.wid=0;
 }
 
@@ -385,7 +384,6 @@ void IdleFunc()
 	printf("Frame %d\n", _frame++);
 
 	DoRad();
-	printf("rad run\n ");
 }
 
 void KeyboardFunc(unsigned char key, int x, int y)
@@ -400,7 +398,7 @@ void MouseFunc(int button, int state, int x, int y)
 
 void PassiveMouseMove(int x, int y)
 {
-	printf("Mose move: %d %d\n", x, y);
+	//printf("Mose move: %d %d\n", x, y);
 }
 
 int main(int argc, char **argv)
@@ -408,8 +406,20 @@ int main(int argc, char **argv)
 	g_argc = argc;
 	g_argv = argv;
 
+	InitParams();
 	InitRad(&params);
 
+	for (unsigned int n = 0; n < params.nPatches; ++n)
+	{
+		TPatch *p = &params.patches[n];
+		for (int m = 0; m < 3; ++m)
+		{
+			double *s = p->emission->samples;
+			printf("%f %f %f\n", s[0], s[1], s[2]);
+		}
+	}
+
+	glutMainLoop();
 	//CleanUpRad();
 
 	return 0;
