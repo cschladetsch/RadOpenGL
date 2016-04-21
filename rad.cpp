@@ -178,7 +178,7 @@ static int FindShootPatch(unsigned long *shootPatch)
 		if (energySum > maxEnergySum)
 		{
 			*shootPatch = i;
-			printf("Patch %ul has energy %f\n", i, energySum);
+			printf("Patch %u has energy %f\n", i, energySum);
 			maxEnergySum = energySum;
 		}
 

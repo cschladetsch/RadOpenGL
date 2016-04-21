@@ -409,15 +409,20 @@ int main(int argc, char **argv)
 	InitParams();
 	InitRad(&params);
 
+	/*
 	for (unsigned int n = 0; n < params.nPatches; ++n)
 	{
 		TPatch *p = &params.patches[n];
 		for (int m = 0; m < 3; ++m)
 		{
 			double *s = p->emission->samples;
-			printf("%f %f %f\n", s[0], s[1], s[2]);
+
+			printf("%d: %f %f %f\n", (int)n, s[0], s[1], s[2]);
 		}
 	}
+	 */
+
+	printf("We have %d patches and %d elements\n", params.nPatches, params.nElements);
 
 	glutMainLoop();
 	//CleanUpRad();
