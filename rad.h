@@ -54,11 +54,11 @@ typedef struct {
 /* Radiosity input parameters */
 typedef struct {
 	double threshold; /* convergence threshold (fraction of the total emitted 						energy) */
-	unsigned long nPatches; /* number of patches */
+	unsigned int nPatches; /* number of patches */
 	TPatch *patches;	/* patches */
-	unsigned long nElements; /* number of elements */
+	unsigned int nElements; /* number of elements */
 	TElement *elements;	/* elements */
-	unsigned long nPoints;	/* number of element vertices */
+	unsigned int nPoints;	/* number of element vertices */
 	TPoint3f *points;	/* element vertices */
 	TView displayView;	/* view to display the results */
 	unsigned short hemicubeRes; /* hemi-cube resolution */

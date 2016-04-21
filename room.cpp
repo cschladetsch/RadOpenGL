@@ -1,31 +1,32 @@
 /*****************************************************************************
-* 	room.c 
+* 	room.c
 *
-*	This is a test program which constrcuts the Cornell radiosity room with 
-*   a ceiling light and two boxes inside. The side faces of the boxes are not 
-*	directly illuminated by the light. Therefore, they are a good example of 
+*	This is a test program which constrcuts the Cornell radiosity room with
+*   a ceiling light and two boxes inside. The side faces of the boxes are not
+*	directly illuminated by the light. Therefore, they are a good example of
 *	the color bleeding effects.
-*   This program calls IniRad(), DoRad() and CleanUpRad() in rad.c to perform 
+*   This program calls IniRad(), DoRad() and CleanUpRad() in rad.c to perform
 *	the radiosity rendering.
 *
 *	Copyright (C) 1990-1991 Apple Computer, Inc.
 *	All rights reserved.
 *
-*	12/1990 S. Eric Chen	
+*	12/1990 S. Eric Chen
 ******************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "rad.h"
-#include "GL/gl.h"
-#include "GL/glu.h"
-#include "GL/freeglut.h"
+#include <GL/glut.h>
 
-void Draw();
+int g_argc;
+char **g_argv;
 
 /* a quadrilateral */
-typedef struct {
+typedef struct
+{
 	short verts[4];	/* vertices of the quadrilateral */
 	short patchLevel; /* patch subdivision level (how fine to subdivide the quadrilateral?) */
 	short elementLevel; /* element subdivision level (how fine to subdivide a patch?) */
@@ -36,23 +37,26 @@ typedef struct {
 } TQuad;
 
 /* input parameters */
-TRadParams	params = {
+TRadParams	params =
+{
 	0.001,			/* convergence threshold */
 	0, 0, 0, 0, 0, 0,	/* patches, elements and points; initialize these in InitParams */
-	{{ 108, 120, 400 },	/* camera location */
-	{ 108, 100, 100 },	/* look at point */
-	{ 0, 1, 0 },	/* up vector */
-	60, 60,			/* field of view in x, y*/
-	1, 550,			/* near, far */
-	200, 200,		/* resolution x, y */
-	0 },			/* buffer */
+	{	{ 108, 120, 400 },	/* camera location */
+		{ 108, 100, 100 },	/* look at point */
+		{ 0, 1, 0 },	/* up vector */
+		60, 60,			/* field of view in x, y*/
+		1, 550,			/* near, far */
+		200, 200,		/* resolution x, y */
+		0
+	},			/* buffer */
 	100,			/* hemi-cube resolution */
 	250,			/* approximate diameter of the room */
 	50,				/* intensity scale */
 	1				/* add the ambient term */
 };
 
-TPoint3f roomPoints[] = {
+TPoint3f roomPoints[] =
+{
 	0, 0, 0,
 	216, 0, 0,
 	216, 0, 215,
@@ -75,7 +79,7 @@ TPoint3f roomPoints[] = {
 	109.36, 65, 96.604,
 	76.896, 65, 152.896,
 	20.604, 65, 120.396,
-	
+
 	134.104, 0, 67.104,
 	190.396, 0, 99.604,
 	157.896, 0, 155.896,
@@ -96,7 +100,8 @@ static TSpectra black = { 0.0, 0.0, 0.0 };
 /* Assume a right-handed coordinate system */
 /* Polygon vertices follow counter-clockwise order when viewing from front */
 #define numberOfPolys 	18
-TQuad roomPolys[numberOfPolys] = {
+TQuad roomPolys[numberOfPolys] =
+{
 	{{4, 5, 6, 7}, 2, 8, 216*215, {0, -1, 0}, &lightGrey, &black}, /* ceiling */
 	{{0, 3, 2, 1}, 3, 8, 216*215, {0, 1, 0}, &lightGrey, &black}, /* floor */
 	{{0, 4, 7, 3}, 2, 8, 221*215, {1, 0, 0}, &red, &black}, /* wall */
@@ -145,21 +150,31 @@ void MeshQuad(TQuad* quad)
 	int nPts=0;
 	float fi, fj;
 	int pi, pj;
-	
+
 	/* Calculate element vertices */
 	for (i=0; i<4; i++)
+	{
 		pts[i] = roomPoints[quad->verts[i]];
+	}
+
 	nu = nv = quad->patchLevel * quad->elementLevel+1;
-	du = 1.0 / (nu-1); dv = 1.0 / (nv-1);
+	du = 1.0 / (nu-1);
+	dv = 1.0 / (nv-1);
+
 	for (i = 0, u = 0; i < nu; i++, u += du)
 		for (j = 0, v = 0; j < nv; j++, v += dv, nPts++)
+		{
 			UVToXYZ(pts, u, v, pPoint++);
+		}
 
 	/* Calculate elements */
 	nu = nv = quad->patchLevel*quad->elementLevel;
-	du = 1.0 / nu; dv = 1.0 / nv;
+	du = 1.0 / nu;
+	dv = 1.0 / nv;
+
 	for (i = 0, u = du/2.0; i < nu; i++, u += du)
-		for (j = 0, v = dv/2.0; j < nv; j++, v += dv, pElement++) {
+		for (j = 0, v = dv/2.0; j < nv; j++, v += dv, pElement++)
+		{
 			pElement->normal = quad->normal;
 			pElement->nVerts = 4;
 			pElement->verts = (unsigned long*)calloc(4, sizeof(unsigned long));
@@ -174,20 +189,24 @@ void MeshQuad(TQuad* quad)
 			pi = (int)(fi*(float)(quad->patchLevel));
 			pj = (int)(fj*(float)(quad->patchLevel));
 			pElement->patch = pPatch+pi*quad->patchLevel+pj;
-	}
-	
+		}
+
 	/* Calculate patches */
-	nu = quad->patchLevel; nv=quad->patchLevel;
-	du = 1.0 / nu; dv = 1.0 / nv;
+	nu = quad->patchLevel;
+	nv=quad->patchLevel;
+	du = 1.0 / nu;
+	dv = 1.0 / nv;
+
 	for (i = 0, u = du/2.0; i < nu; i++, u += du)
-		for (j = 0, v = dv/2.0; j < nv; j++, v += dv, pPatch++) {
+		for (j = 0, v = dv/2.0; j < nv; j++, v += dv, pPatch++)
+		{
 			UVToXYZ(pts, u, v, &pPatch->center);
 			pPatch->normal = quad->normal;
 			pPatch->reflectance = quad->reflectance;
 			pPatch->emission = quad->emission;
 			pPatch->area = quad->area / (nu*nv);
 		}
-	
+
 	iOffset += nPts;
 }
 
@@ -198,22 +217,30 @@ void InitParams()
 
 	/* compute the total number of patches */
 	params.nPatches=0;
+
 	for (i=numberOfPolys; i--; )
+	{
 		params.nPatches += roomPolys[i].patchLevel*roomPolys[i].patchLevel;
+	}
+
 	params.patches = (TPatch*)calloc(params.nPatches, sizeof(TPatch));
 
 	/* compute the total number of elements */
 	params.nElements=0;
+
 	for (i=numberOfPolys; i--; )
 		params.nElements += roomPolys[i].elementLevel*roomPolys[i].patchLevel*
-						roomPolys[i].elementLevel*roomPolys[i].patchLevel;
+		                    roomPolys[i].elementLevel*roomPolys[i].patchLevel;
+
 	params.elements = (TElement*)calloc(params.nElements, sizeof(TElement));
 
 	/* compute the total number of element vertices */
 	params.nPoints=0;
+
 	for (i=numberOfPolys; i--; )
 		params.nPoints += (roomPolys[i].elementLevel*roomPolys[i].patchLevel+1)*
-						(roomPolys[i].elementLevel*roomPolys[i].patchLevel+1);
+		                  (roomPolys[i].elementLevel*roomPolys[i].patchLevel+1);
+
 	params.points = (TPoint3f*)calloc(params.nPoints, sizeof(TPoint3f));
 
 	/* mesh the room to patches and elements */
@@ -221,26 +248,169 @@ void InitParams()
 	pPatch= params.patches;
 	pElement= params.elements;
 	pPoint= params.points;
+
 	for (i=0; i<numberOfPolys; i++)
+	{
 		MeshQuad(&roomPolys[i]);
-	
+	}
+
 	params.displayView.buffer= (unsigned long*)calloc(
-		params.displayView.xRes*params.displayView.yRes, sizeof(unsigned long));
+	                               params.displayView.xRes*params.displayView.yRes, sizeof(unsigned long));
 	params.displayView.wid=0;
+}
+
+void glhFrustumf2(float *matrix, float left, float right, float bottom, float top,
+				  float znear, float zfar)
+{
+	float temp, temp2, temp3, temp4;
+	temp = 2.0f * znear;
+	temp2 = right - left;
+	temp3 = top - bottom;
+	temp4 = zfar - znear;
+	matrix[0] = temp / temp2;
+	matrix[1] = 0.0;
+	matrix[2] = 0.0;
+	matrix[3] = 0.0;
+	matrix[4] = 0.0;
+	matrix[5] = temp / temp3;
+	matrix[6] = 0.0;
+	matrix[7] = 0.0;
+	matrix[8] = (right + left) / temp2;
+	matrix[9] = (top + bottom) / temp3;
+	matrix[10] = (-zfar - znear) / temp4;
+	matrix[11] = -1.0f;
+	matrix[12] = 0.0;
+	matrix[13] = 0.0;
+	matrix[14] = (-temp * zfar) / temp4;
+	matrix[15] = 0.0;
+}
+
+void glhPerspectivef2(float *matrix, float fovyInDegrees, float aspectRatio,
+					  float znear, float zfar)
+{
+	float ymax, xmax;
+	ymax = znear * tanf((float)(fovyInDegrees * (float)M_PI / 360.0));
+	xmax = ymax * aspectRatio;
+	glhFrustumf2(matrix, -xmax, xmax, -ymax, ymax, znear, zfar);
+}
+void reshape(GLsizei width, GLsizei height)    // GLsizei for non-negative integer
+{
+	// Compute aspect ratio of the new window
+	if (height == 0)
+	{
+		height = 1;    // To prevent divide by 0
+	}
+
+	GLfloat aspect = (GLfloat)width / (GLfloat)height;
+
+	// Set the viewport to cover the new window
+	glViewport(0, 0, width, height);
+
+	// Set the aspect ratio of the clipping volume to match the viewport
+	glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
+	glLoadIdentity();             // Reset
+	// Enable perspective projection with fovy, aspect, zNear and zFar
+	float matrix[16];
+	glhPerspectivef2(matrix, 45.0f, aspect, 0.1f, 100.0f);
+	glLoadMatrixf(matrix);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+
+	// Render a color-cube consisting of 6 quads with different colors
+	glLoadIdentity();                 // Reset the model-view matrix
+}
+
+void displayOld()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+
+	// Render a color-cube consisting of 6 quads with different colors
+	glLoadIdentity();                 // Reset the model-view matrix
+	glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
+
+	glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+	// Top face (y = 1.0f)
+	// Define vertices in counter-clockwise (CCW) order with normal pointing out
+	glColor3f(0.0f, 1.0f, 0.0f);     // Green
+	glVertex3f( 1.0f, 1.0f, -1.0f);
+	glVertex3f(-1.0f, 1.0f, -1.0f);
+	glVertex3f(-1.0f, 1.0f,  1.0f);
+	glVertex3f( 1.0f, 1.0f,  1.0f);
+
+	// Bottom face (y = -1.0f)
+	glColor3f(1.0f, 0.5f, 0.0f);     // Orange
+	glVertex3f( 1.0f, -1.0f,  1.0f);
+	glVertex3f(-1.0f, -1.0f,  1.0f);
+	glVertex3f(-1.0f, -1.0f, -1.0f);
+	glVertex3f( 1.0f, -1.0f, -1.0f);
+
+	// Front face  (z = 1.0f)
+	glColor3f(1.0f, 0.0f, 0.0f);     // Red
+	glVertex3f( 1.0f,  1.0f, 1.0f);
+	glVertex3f(-1.0f,  1.0f, 1.0f);
+	glVertex3f(-1.0f, -1.0f, 1.0f);
+	glVertex3f( 1.0f, -1.0f, 1.0f);
+
+	// Back face (z = -1.0f)
+	glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
+	glVertex3f( 1.0f, -1.0f, -1.0f);
+	glVertex3f(-1.0f, -1.0f, -1.0f);
+	glVertex3f(-1.0f,  1.0f, -1.0f);
+	glVertex3f( 1.0f,  1.0f, -1.0f);
+
+	// Left face (x = -1.0f)
+	glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+	glVertex3f(-1.0f,  1.0f,  1.0f);
+	glVertex3f(-1.0f,  1.0f, -1.0f);
+	glVertex3f(-1.0f, -1.0f, -1.0f);
+	glVertex3f(-1.0f, -1.0f,  1.0f);
+
+	// Right face (x = 1.0f)
+	glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
+	glVertex3f(1.0f,  1.0f, -1.0f);
+	glVertex3f(1.0f,  1.0f,  1.0f);
+	glVertex3f(1.0f, -1.0f,  1.0f);
+	glVertex3f(1.0f, -1.0f, -1.0f);
+	glEnd();  // End of drawing color-cube
+
+	glutSwapBuffers();
+}
+
+int _frame;
+
+void IdleFunc()
+{
+	printf("Frame %d\n", _frame++);
+
+	DoRad();
+	printf("rad run\n ");
+}
+
+void KeyboardFunc(unsigned char key, int x, int y)
+{
+	printf("wrote %c at %d %d\n", key, x, y);
+}
+
+void MouseFunc(int button, int state, int x, int y)
+{
+	printf("mouse button: %d %d %d %d\n", button, state, x, y);
+}
+
+void PassiveMouseMove(int x, int y)
+{
+	printf("Mose move: %d %d\n", x, y);
 }
 
 int main(int argc, char **argv)
 {
-	//InitGraphics();
-	printf("gfx inited\n");
+	g_argc = argc;
+	g_argv = argv;
 
 	InitRad(&params);
-	printf("rad inited\n");
 
-	DoRad();
-	printf("rad run\n ");
-
-	CleanUpRad();
+	//CleanUpRad();
 
 	return 0;
 }

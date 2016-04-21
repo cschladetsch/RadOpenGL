@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(RadOpenGL)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "-g -std=c++11")
 set(SOURCE_FILES rad.cpp room.cpp draw.cpp)
 
 # find OpenGL and Glut libraries
@@ -30,6 +30,6 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(gl DEFAULT_MSG gl_LIBRARY gl_INCLUDE_DIR)
 
 add_executable(RadOpenGL ${SOURCE_FILES})
 
-target_link_libraries(RadOpenGL glut)
 target_link_libraries(RadOpenGL GL)
+target_link_libraries(RadOpenGL glut)
 
