@@ -15,6 +15,7 @@
 ******************************************************************************/
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "rad.h"
 #include "GL/gl.h"
@@ -228,16 +229,17 @@ void InitParams()
 	params.displayView.wid=0;
 }
 
-void InitGraphics()
-{
-}
-
 int main(int argc, char **argv)
 {
-	InitGraphics();
+	//InitGraphics();
+	printf("gfx inited\n");
 
 	InitRad(&params);
+	printf("rad inited\n");
+
 	DoRad();
+	printf("rad run\n ");
+
 	CleanUpRad();
 
 	return 0;

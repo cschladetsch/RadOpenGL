@@ -19,9 +19,11 @@
 *  12/1990 S. Eric Chen	
 ******************************************************************************/
 
-#include "rad.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+#include "rad.h"
 
 #define kMaxPolyPoints	255
 #define PI	3.1415926
@@ -78,18 +80,18 @@ void InitRad(TRadParams *p)
 	hRes = ((int)(params->hemicubeRes/2.0+0.5))*2;
 	hemicube.view.xRes = hemicube.view.yRes = hRes;
 	n = hRes*hRes;
-	hemicube.view.buffer = calloc(n, sizeof(unsigned long));
+	hemicube.view.buffer = (unsigned  long int *)calloc(n, sizeof(unsigned long));
 	hemicube.view.wid=0;
 	hemicube.view.near = params->worldSize*0.001;
 	hemicube.view.far = params->worldSize;
 	
 	/* take advantage of the symmetry in the delta form-factors */
-	hemicube.topFactors= calloc(n/4, sizeof(double));
-	hemicube.sideFactors= calloc(n/4, sizeof(double));
+	hemicube.topFactors= (double *)calloc(n/4, sizeof(double));
+	hemicube.sideFactors= (double *)calloc(n/4, sizeof(double));
 	MakeTopFactors(hRes/2, hemicube.topFactors);
 	MakeSideFactors(hRes/2, hemicube.sideFactors);
 	
-	formfactors = calloc(params->nElements, sizeof(double));
+	formfactors = (double *)calloc(params->nElements, sizeof(double));
 	
 	/* initialize radiosity */
 	pp = params->patches;
@@ -117,8 +119,11 @@ void DoRad()
 	
 	while (FindShootPatch(&shootPatch)) 
 	{
+		printf("1\n");
 		ComputeFormfactors(shootPatch);
+		printf("2\n");
 		DistributeRad(shootPatch);
+		printf("3\n");
 		DisplayResults(&params->displayView);
 	}
 	

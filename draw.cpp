@@ -11,7 +11,7 @@
 #include "rad.h"
 
 #include "GL/glew.h"
-#include "GL/wglew.h"
+//#include "GL/wglew.h"
 
 void BeginDraw(TView *view, unsigned long color)
 {

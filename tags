@@ -4,36 +4,67 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-AddVector	rad.c	28;"	d	file:
+AddVector	rad.c	30;"	d	file:
+BeginDraw	draw.c	/^void BeginDraw(TView *view, unsigned long color)$/;"	f
 CleanUpRad	rad.c	/^void CleanUpRad()$/;"	f
 ComputeFormfactors	rad.c	/^static void ComputeFormfactors(unsigned long shootPatch)$/;"	f	file:
-CrossVector	rad.c	30;"	d	file:
+CrossVector	rad.c	32;"	d	file:
 DisplayResults	rad.c	/^DisplayResults(TView* view)$/;"	f	file:
 DistributeRad	rad.c	/^static void DistributeRad(unsigned long shootPatch)$/;"	f	file:
 DoRad	rad.c	/^void DoRad()$/;"	f
-DotVector	rad.c	33;"	d	file:
+DotVector	rad.c	35;"	d	file:
 DrawElement	rad.c	/^static void DrawElement(TElement* ep, unsigned long color)$/;"	f	file:
+DrawPolygon	draw.c	/^void DrawPolygon(int nPts, TPoint3f *pts, TVector3f* n, unsigned long color)$/;"	f
+EndDraw	draw.c	/^void EndDraw()$/;"	f
 FindShootPatch	rad.c	/^static int FindShootPatch(unsigned long *shootPatch)$/;"	f	file:
 GetAmbient	rad.c	/^GetAmbient(TSpectra* ambient)$/;"	f	file:
-Index	rad.c	170;"	d	file:
+Index	rad.c	175;"	d	file:
+Index	room.c	128;"	d	file:
+InitGraphics	room.c	/^void InitGraphics(int argc, char **argv)$/;"	f
+InitParams	room.c	/^void InitParams()$/;"	f
 InitRad	rad.c	/^void InitRad(TRadParams *p)$/;"	f
 MakeSideFactors	rad.c	/^static void MakeSideFactors($/;"	f	file:
 MakeTopFactors	rad.c	/^static void MakeTopFactors($/;"	f	file:
-NormalizeVector	rad.c	35;"	d	file:
-PI	rad.c	27;"	d	file:
-RandomFloat	rad.c	262;"	d	file:
-ScaleVector	rad.c	34;"	d	file:
+MeshQuad	room.c	/^void MeshQuad(TQuad* quad)$/;"	f
+NormalizeVector	rad.c	37;"	d	file:
+PI	rad.c	29;"	d	file:
+RandomFloat	rad.c	267;"	d	file:
+ScaleVector	rad.c	36;"	d	file:
 SpectraToRGB	rad.c	/^SpectraToRGB(TSpectra* spectra)$/;"	f	file:
-SubVector	rad.c	29;"	d	file:
+SubVector	rad.c	31;"	d	file:
 SumFactors	rad.c	/^static void SumFactors($/;"	f	file:
 THemicube	rad.c	/^} THemicube;$/;"	t	typeref:struct:__anon1	file:
+TQuad	room.c	/^} TQuad;$/;"	t	typeref:struct:__anon2	file:
+UVToXYZ	room.c	/^void UVToXYZ(const TPoint3f quad[4], float u, float v, TPoint3f* xyz)$/;"	f
+area	room.c	/^	float area; \/* area of the quadrilateral *\/$/;"	m	struct:__anon2	file:
 black	rad.c	/^static const TSpectra black = { 0, 0, 0 };	\/* for initialization *\/$/;"	v	file:
+black	room.c	/^static TSpectra black = { 0.0, 0.0, 0.0 };$/;"	v	file:
+blue	room.c	/^static TSpectra blue = { 0.075, 0.10, 0.35 };$/;"	v	file:
+elementLevel	room.c	/^	short elementLevel; \/* element subdivision level (how fine to subdivide a patch?) *\/$/;"	m	struct:__anon2	file:
+emission	room.c	/^	TSpectra* emission; \/* emission of the quadrilateral *\/$/;"	m	struct:__anon2	file:
 formfactors	rad.c	/^static double *formfactors;	\/* a form-factor array which has the same length as the number of elements *\/$/;"	v	file:
 hemicube	rad.c	/^static THemicube hemicube;	\/* one hemi-cube *\/$/;"	v	file:
-kBackgroundItem	rad.c	173;"	d	file:
-kMaxPolyPoints	rad.c	26;"	d	file:
+iOffset	room.c	/^int iOffset; 	\/* index offset to the point array *\/$/;"	v
+kBackgroundItem	rad.c	178;"	d	file:
+kMaxPolyPoints	rad.c	28;"	d	file:
+lightGrey	room.c	/^static TSpectra lightGrey = { 0.9, 0.9, 0.9 };$/;"	v	file:
+main	room.c	/^int main(int argc, char **argv)$/;"	f
+normal	room.c	/^	TVector3f normal; \/* normal of the quadrilateral *\/$/;"	m	struct:__anon2	file:
+numberOfPolys	room.c	97;"	d	file:
+pElement	room.c	/^TElement* pElement;$/;"	v
+pPatch	room.c	/^TPatch* pPatch;$/;"	v
+pPoint	room.c	/^TPoint3f* pPoint;$/;"	v
 params	rad.c	/^static TRadParams *params;	\/* input parameters *\/$/;"	v	file:
+params	room.c	/^TRadParams	params = {$/;"	v
+patchLevel	room.c	/^	short patchLevel; \/* patch subdivision level (how fine to subdivide the quadrilateral?) *\/$/;"	m	struct:__anon2	file:
+red	room.c	/^static TSpectra red = { 0.80, 0.10, 0.075 };$/;"	v	file:
+reflectance	room.c	/^	TSpectra* reflectance; \/* diffuse reflectance of the quadrilateral *\/$/;"	m	struct:__anon2	file:
+roomPoints	room.c	/^TPoint3f roomPoints[] = {$/;"	v
+roomPolys	room.c	/^TQuad roomPolys[numberOfPolys] = {$/;"	v
 sideFactors	rad.c	/^	double*	sideFactors; \/* delta form-factors of the side faces *\/$/;"	m	struct:__anon1	file:
 topFactors	rad.c	/^	double*	topFactors;	\/* delta form-factors(weight for each pixel) of the top face *\/$/;"	m	struct:__anon1	file:
 totalEnergy	rad.c	/^static double totalEnergy;	\/* total emitted energy; used for convergence checking *\/$/;"	v	file:
+verts	room.c	/^	short verts[4];	\/* vertices of the quadrilateral *\/$/;"	m	struct:__anon2	file:
 view	rad.c	/^	TView	view;	\/* we only need to store one face of the hemi-cube *\/$/;"	m	struct:__anon1	file:
+white	room.c	/^static TSpectra white = { 1.0, 1.0, 1.0 };$/;"	v	file:
+yellow	room.c	/^static TSpectra yellow = { 0.9, 0.8, 0.1 };$/;"	v	file:
